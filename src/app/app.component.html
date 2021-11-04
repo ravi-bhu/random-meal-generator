@@ -1,2 +1,5 @@
 <app-toolbar></app-toolbar>
-<app-meal></app-meal>
+<app-meal *ngIf="meal$ | async; let meal; else: home" [meal]="meal"></app-meal>
+<ng-template #home>
+  <app-home></app-home>
+</ng-template>

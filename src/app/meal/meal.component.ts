@@ -1,20 +1,24 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, Input } from '@angular/core';
 import { Recipe } from '../core/recipe.model';
-import { MealService } from '../core/meal.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-meal',
   templateUrl: './meal.component.html',
   styleUrls: ['./meal.component.scss'],
 })
-export class MealComponent implements OnInit {
+export class MealComponent {
   @Input()
-  getNewMeal?: EventEmitter<void>;
-  meal$?: Observable<Recipe>;
-  constructor(private mealService: MealService) {}
+  meal?: Recipe;
 
-  ngOnInit(): void {
-    this.meal$ = this.mealService.getMeal();
+  constructor(private sanitizer: DomSanitizer) {}
+
+  getSanitizedUrl(url: string) {
+    const embedUrl = MealComponent.youtubeWatchUrlToEmbedUrl(url);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+  }
+
+  private static youtubeWatchUrlToEmbedUrl(url: string): string {
+    return url.replace('watch?v=', 'embed/');
   }
 }

@@ -8,9 +8,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MealComponent } from './meal/meal.component';
 import { HttpClientModule } from '@angular/common/http';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
-  declarations: [AppComponent, ToolbarComponent, MealComponent],
+  declarations: [AppComponent, ToolbarComponent, MealComponent, HomeComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

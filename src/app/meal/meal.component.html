@@ -1,1 +1,26 @@
-<h1>{{ (meal$ | async)?.name }}</h1>
+<section *ngIf="meal; else noMeal">
+  <h1>{{ meal.name }}</h1>
+  <figure>
+    <img [src]="meal.pictureUrl" alt="" />
+  </figure>
+  <section>
+    <ul *ngFor="let ingredient of meal.ingredients">
+      <li>{{ ingredient.name }} - {{ ingredient.measure }}</li>
+    </ul>
+  </section>
+  <section>{{ meal.instructions }}</section>
+  <section>
+    <iframe
+      class="youtube-embed"
+      width="930"
+      height="523"
+      [src]="getSanitizedUrl(meal.tutorialVideoUrl)"
+      title="YouTube video player"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+  </section>
+</section>
+<ng-template #noMeal>
+  <div>No Meal Found</div>
+</ng-template>
