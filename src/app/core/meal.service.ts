@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Recipe } from './recipe.model';
 import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Ingredient } from './ingredient.model';
 
 const RANDOM_RECIPE_URL = 'https://www.themealdb.com/api/json/v1/1/random.php';
@@ -15,34 +15,12 @@ export class MealService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getMeal(): Observable<Recipe> {
-    return this.meal$.asObservable();
-  }
-
-  updateWithNewMeal() {
-    this.fetchMeal()
-      .pipe(
-        map((data) => {
-          const meal = data.meals[0];
-          return MealService.toRecipe(meal);
-        }),
-        tap((data) => console.log('data: ', data))
-      )
-      .subscribe((data) => {
-        this.meal$.next(data);
-      });
-  }
-
-  private fetchMeal() {
-    return this.httpClient.get<any>(RANDOM_RECIPE_URL);
-  }
-
   private static toRecipe(meal: any): Recipe {
     return {
       id: meal.idMeal,
       name: meal.strMeal,
       ingredients: MealService.getIngredients(meal),
-      instructions: meal.strInstructions,
+      instructions: MealService.getInstructions(meal.strInstructions),
       pictureUrl: meal.strMealThumb,
       tutorialVideoUrl: meal.strYoutube,
     };
@@ -67,5 +45,33 @@ export class MealService {
       name: meal[key],
       measure: meal[measure],
     };
+  }
+
+  private static getInstructions(strInstructions: string) {
+    return strInstructions
+      .split('.')
+      .filter((s) => s.length > 0)
+      .map((s) => s + '.');
+  }
+
+  getMeal(): Observable<Recipe> {
+    return this.meal$.asObservable();
+  }
+
+  generateMeal() {
+    this.fetchMeal()
+      .pipe(
+        map((data) => {
+          const meal = data.meals[0];
+          return MealService.toRecipe(meal);
+        })
+      )
+      .subscribe((data) => {
+        this.meal$.next(data);
+      });
+  }
+
+  private fetchMeal() {
+    return this.httpClient.get<any>(RANDOM_RECIPE_URL);
   }
 }
